@@ -1,6 +1,3 @@
-//code is placed at /part1/a/introdemo/src/App.jsx
-
-/**
 const Header = (props)=>{
   return <>
     <h1>{props.course.name}</h1>
@@ -54,4 +51,3 @@ const App = ()=>{
 }
 
 export default App
-*/
