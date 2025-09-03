@@ -1,37 +1,62 @@
 import {useState} from "react"
-import Note from "../components/Note.jsx"
-const App =(props)=>{
-  const [notes, setNotes] = useState(props.notes)
-  const [newNote, setNewNote] = useState("")
-  const [showAll, setShowAll] = useState(true)
-  
-  const notesOnDisplay = showAll ? notes : notes.filter((note)=>note.important)
 
-  const addNote =(event)=>{
+const App=()=>{
+  const [persons, setPersons] = useState([
+    {
+      name:"Arto Hellas",
+      phone:1234567890
+    },
+    {
+      name:"Ardo",
+      phone:2345678901
+    }
+  ])
+  const [newName, setNewName] = useState("")
+  const [newPhone, setNewPhone] = useState("")
+  const [filter, setFilter] = useState("")
+  
+  const handleNameInputChange=(event)=>{
+    setNewName(event.target.value)
+  }
+  const handlePhoneInputChange=(event)=>{
+    setNewPhone(event.target.value)
+  }
+  const addPerson=(event)=>{
     event.preventDefault()
-    const newNotes = notes.concat({important: Math.random()<0.5, id: String(notes.length + 1), content: newNote})
-    setNotes(newNotes)
-    setNewNote("")
+    let userFlag = false
+    for(let i = 0; i < persons.length; i++){      
+      if (persons[i].name === newName){
+        userFlag = true
+        break
+      }
+    }
+    if(userFlag){
+      alert(`${newName} already in phonebook`)
+    }else{
+      setPersons(persons.concat({name:newName, phone:newPhone}))
+    }
+    setNewName("")
+    setNewPhone("")
   }
-
-  const handleInputChange=(event)=>{
-    console.log("handle input here", event.target.value)
-    setNewNote(event.target.value)    
+  const handleFilterInputChange=(event)=>{
+    setFilter(event.target.value)
   }
-
-  
   return <>
-    <h1>Notes</h1>
-    <ul>
-      {notesOnDisplay.map((note)=><Note key={note.id} note={note} />)}
-    </ul>
-    <form onSubmit={addNote}>
-      <input value={newNote} onChange={handleInputChange}/>
-      <button  type="submit">Add note</button>
+    <h2>Phonebook</h2>
+    Filter by name: <input value={filter} onChange={handleFilterInputChange}/>
+    <h2>Add a new person</h2>
+    <form onSubmit={addPerson}>
+      <div>name: <input  value={newName} onChange={handleNameInputChange}/></div>
+      <div>phone: <input  value={newPhone} onChange={handlePhoneInputChange}/></div>
+      <button type="submit">
+        Add
+      </button>
     </form>
-    <button onClick={()=>{
-      setShowAll(!showAll)
-    }}>Show {showAll ? "Important" : "All"}</button>
+    <h2>Numbers</h2>
+    <ul>
+      {persons.map((person)=><li key={person.name}>{person.name} {person.phone}</li>)}
+    </ul>
   </>
 }
+
 export default App
