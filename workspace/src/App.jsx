@@ -6,7 +6,7 @@ const App =(props)=>{
   const [showAll, setShowAll] = useState(true)
   
   const notesOnDisplay = showAll ? notes : notes.filter((note)=>note.important)
-  console.log(notesOnDisplay)
+
   const addNote =(event)=>{
     event.preventDefault()
     const newNotes = notes.concat({important: Math.random()<0.5, id: String(notes.length + 1), content: newNote})
@@ -19,9 +19,7 @@ const App =(props)=>{
     setNewNote(event.target.value)    
   }
 
-  const showImportantToggle=()=>{
-    setShowAll(!showAll)
-  }
+  
   return <>
     <h1>Notes</h1>
     <ul>
@@ -31,7 +29,9 @@ const App =(props)=>{
       <input value={newNote} onChange={handleInputChange}/>
       <button  type="submit">Add note</button>
     </form>
-    <button onClick={showImportantToggle}>Show important</button>
+    <button onClick={()=>{
+      setShowAll(!showAll)
+    }}>Show {showAll ? "Important" : "All"}</button>
   </>
 }
 export default App
