@@ -1,8 +1,7 @@
 import { use } from "react"
 import {useState} from "react"
 import Person from "../components/Person"
-import Name from "../components/Name"
-import Phone from "../components/Phone"
+import PersonForm from "../components/PersonForm"
 import Filter from "../components/Filter"
 
 const App=()=>{
@@ -19,7 +18,9 @@ const App=()=>{
   const display =  persons.filter((person)=>person.name.substring(0, filter.length).toLowerCase() === filter)
 
   const handleNameInputChange=(event)=>{
+    
     setNewName(event.target.value)
+    
   }
   const handlePhoneInputChange=(event)=>{
     setNewPhone(event.target.value)
@@ -41,7 +42,7 @@ const App=()=>{
     if(userFlag){
       alert(`${newName} already in phonebook`)
     }else{
-      setPersons(persons.concat({name:newName, phone:newPhone, id:persons.length + 1}))
+      setPersons(persons.concat({name:newName, number:newPhone, id:persons.length + 1}))
     }
     setNewName("")
     setNewPhone("")
@@ -51,13 +52,10 @@ const App=()=>{
     <h2>Phonebook</h2>
     <Filter filter={filter}  onChange={handleFilterInputChange}/>
     <h2>Add a new person</h2>
-    <form onSubmit={addPerson}>
-      <Name name={newName} onChange={handleNameInputChange}/>
-      <Phone number={newPhone} onChange={handlePhoneInputChange}/>
-      <button type="submit">
-        Add
-      </button>
-    </form>
+    <PersonForm onSubmit={addPerson} 
+    nameComp={{name:newName, onChange:handleNameInputChange}} 
+    phoneComp={{number:newPhone, onChange:handlePhoneInputChange}}/>
+  
     <h2>Numbers</h2>
     <ul>
       {display.map((person)=><Person key={person.id} name={person.name} number={person.number}/>)}

@@ -1,6 +1,6 @@
 const Phone =({number, onChange})=>{
   return <>
-    phone: <input number={number} onChange={onChange}/>
+    phone: <input value={number} onChange={onChange}/>
   </>
 }
 export default Phone
