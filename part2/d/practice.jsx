@@ -1,6 +1,5 @@
 import {useState, useEffect} from "react"
 import Note from "../components/Note.jsx"
-import axios from "axios"
 import noteService from "./services/notes.js"
 const App =(props)=>{
   const [notes, setNotes] = useState([])
