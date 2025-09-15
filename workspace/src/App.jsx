@@ -38,10 +38,16 @@ const App=()=>{
         break
       }
     }
+    const newPerson = {name:newName, number:newPhone, id:`${persons.length + 1}`}
     if(userFlag){
-      alert(`${newName} already in phonebook`)
+      const duplicateId = persons.find(p=>p.name === newName).id
+      if(window.confirm(`${newName} already in phonebook, Wanna change its number ?`)){
+        phonebookServices.changeNumber(duplicateId, newPerson).then(res=>{
+          setPersons(persons.map(person=>person.id === duplicateId ? newPerson : person))
+        })
+      }
+      
     }else{
-      const newPerson = {name:newName, number:newPhone, id:persons.length + 1}
       phonebookServices.addPerson(newPerson).then(res=>{
         setPersons(persons.concat(newPerson))
       })
@@ -50,10 +56,13 @@ const App=()=>{
     setNewPhone("")
   }
 
-  const handleDelete=()=>{
+  const handleDelete=(event)=>{
     const id = event.target.id
-    window.confirm("Gonna delete", phonebookServices.deletePerson(id))
-    setPersons(persons.filter(person=>person.id !== id))
+    if(window.confirm("Gonna delete")){
+      phonebookServices.deletePerson(id).then(res=>{
+        setPersons(persons.filter(person=>person.id !== id))
+      })
+    }
   }
 
   return <>

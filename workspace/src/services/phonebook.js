@@ -10,5 +10,9 @@ const addPerson =(newPerson)=>{
 const deletePerson=(id)=>{
   return axios.delete(`http://${window.location.hostname}:3001/persons/${id}`)
 }
+const changeNumber =(id, newPhone)=>{
+  const req = axios.put(`http://${window.location.hostname}:3001/persons/${id}`, newPhone)
+  return req.then(res=>res.data)
+}
 
-export default {getPersons, deletePerson, addPerson}
+export default {getPersons, deletePerson, addPerson, changeNumber}
