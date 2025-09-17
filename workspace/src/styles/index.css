@@ -1,0 +1,20 @@
+h1{ 
+  color:green;
+  font-style: italic;
+}
+.note{
+  color: gray;
+  padding: 5px;
+}
+.importanceButton{
+  margin-left: 6px;
+}
+.error{
+  border: solid red;
+  background-color: lightgray;
+  padding: 10px;
+  color: red;
+  border-radius: 4px;
+  font-size: 24px;
+  margin-bottom: 20px;
+}
