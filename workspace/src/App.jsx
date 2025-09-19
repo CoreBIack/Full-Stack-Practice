@@ -1,63 +1,95 @@
 import {useState, useEffect} from "react"
-import Note from "../components/Note.jsx"
-import noteService from "./services/notes.js"
-import Notification from "../components/Notification.jsx"
-import Footer from "../components/Footer.jsx"
-import "./styles/index.css"
-const App =()=>{
-  const [notes, setNotes] = useState([])
-  const [newNote, setNewNote] = useState("")
-  const [showAll, setShowAll] = useState(true)
-  const [errorMessage, setErrorMessage] = useState(null)
-  
-  useEffect(()=>{noteService.getAll().then((res)=>{setNotes(res)})}, [])
+import PersonForm from "../components/PersonForm"
+import Filter from "../components/Filter"
+import Persons from "../components/Persons"
+import phonebookServices from "./services/phonebook"
+import Notification from "../components/Notification"
+import "./styles/practice-e.css"
 
-  const notesOnDisplay = showAll ? notes : notes.filter((note)=>note.important)
+const App=()=>{
+  const [persons, setPersons] = useState([])
+  const [newName, setNewName] = useState("")
+  const [newPhone, setNewPhone] = useState("")
+  const [filter, setFilter] = useState("")
+  const [notification, setNotification] = useState(null)
   
-  const addNote =(event)=>{
+  useEffect(()=>{
+    phonebookServices.getPersons().then((res)=>{
+      setPersons(res)
+    })
+  },[])
+
+  const display =  persons.filter((person)=>person.name.substring(0, filter.length).toLowerCase() === filter)
+
+  const handleNameInputChange=(event)=>{
+    setNewName(event.target.value)
+  }
+  const handlePhoneInputChange=(event)=>{
+    setNewPhone(event.target.value)
+  }
+  const handleFilterInputChange=(event)=>{
+    setFilter(event.target.value)
+  }
+
+
+  const handleAddPerson=(event)=>{
     event.preventDefault()
-    const notePost = {important: Math.random()<0.5, content: newNote}
-    noteService.create(notePost).then((res)=>{
-      setNotes(notes.concat(res))
-      setNewNote("")
-    })
-  }
-
-  const handleInputChange=(event)=>{
-    console.log("handle input here", event.target.value)
-    setNewNote(event.target.value)    
-  }
-
-  const toggleImportance=(id)=>{
-    const note = notes.find(n=>n.id === id)
-    const toggledNote = {...note, important: !note.important}
-    noteService.update(id, toggledNote).then((res)=>{
+    let userFlag = false
+    for(let i = 0; i < persons.length; i++){      
+      if (persons[i].name === newName){
+        userFlag = true
+        break
+      }
+    }
+    const newPerson = {name:newName, number:newPhone, id:`${persons.length + 1}`}
+    if(userFlag){
+      const duplicateId = persons.find(p=>p.name === newName).id
+      if(window.confirm(`${newName} already in phonebook, Wanna change its number ?`)){
+        phonebookServices.changeNumber(duplicateId, newPerson).then(res=>{
+          setPersons(persons.map(person=>person.id === duplicateId ? newPerson : person))
+        })
+      }
       
-      setNotes(notes.map(note=>note.id === id ? res: note))
-    }).catch(error=>{
-      setErrorMessage("this note was a glitch and it has been handled")
-      setTimeout(()=>{
-        setErrorMessage(null)
-      }, 5000)
-      setNotes(notes.filter(note=>note.id !== id))
-    })
-    
+    }else{
+      phonebookServices.addPerson(newPerson).then(res=>{
+        setPersons(persons.concat(newPerson))
+      })
+    }
+    setNotification(`Added ${newPerson.name}`)
+    setTimeout(()=>{
+      setNotification(null)
+    }, 5000)
+    setNewName("")
+    setNewPhone("")
+  }
+
+  const handleDelete=(event)=>{
+    const id = event.target.id
+    if(window.confirm("Gonna delete")){
+      phonebookServices.deletePerson(id).then(res=>{
+        setPersons(persons.filter(person=>person.id !== id))
+      })
+    }
   }
 
   return <>
-    <h1>Notes</h1>
-    <Notification message={errorMessage}/>
-    <button onClick={()=>{
-      setShowAll(!showAll)
-    }}>Show {showAll ? "Important" : "All"}</button>
-    <ul>
-      {notesOnDisplay.map((note)=><Note key={note.id} note={note} toggleImportance={()=>{toggleImportance(note.id)}}/>)}
-    </ul>
-    <form onSubmit={addNote}>
-      <input value={newNote} onChange={handleInputChange}/>
-      <button  type="submit">Add note</button>
-    </form>
-    <Footer/>
+    <h2>Phonebook</h2>
+
+    <Notification message={notification} className="notification"/>
+    
+    <Filter filter={filter}  onChange={handleFilterInputChange}/>
+    
+    <h2>Add a new person</h2>
+    
+    <PersonForm onSubmit={handleAddPerson} 
+    nameComp={{name:newName, onChange:handleNameInputChange}} 
+    phoneComp={{number:newPhone, onChange:handlePhoneInputChange}}
+    />
+
+    <h2>Numbers</h2>
+    
+    <Persons display={display} handleDelete={handleDelete}/>
   </>
 }
+
 export default App
