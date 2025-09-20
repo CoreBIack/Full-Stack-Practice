@@ -12,6 +12,7 @@ const App=()=>{
   const [newPhone, setNewPhone] = useState("")
   const [filter, setFilter] = useState("")
   const [notification, setNotification] = useState(null)
+  const [errorMessage, setErrorMessage] = useState(null)
   
   useEffect(()=>{
     phonebookServices.getPersons().then((res)=>{
@@ -68,6 +69,13 @@ const App=()=>{
     if(window.confirm("Gonna delete")){
       phonebookServices.deletePerson(id).then(res=>{
         setPersons(persons.filter(person=>person.id !== id))
+      }).catch(error=>{
+        const deletedPerson = persons.find(person=>person.id === id)
+        setErrorMessage(`${deletedPerson.name} has already been deleted`)
+        setTimeout(()=>{
+          setErrorMessage(null)
+        }, 5000)
+        setPersons(persons.filter(person=>person.id !== id))
       })
     }
   }
@@ -76,6 +84,8 @@ const App=()=>{
     <h2>Phonebook</h2>
 
     <Notification message={notification} className="notification"/>
+    <Notification message={errorMessage} className="error"/>
+
     
     <Filter filter={filter}  onChange={handleFilterInputChange}/>
     
