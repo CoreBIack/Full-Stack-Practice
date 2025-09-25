@@ -27,13 +27,31 @@ app.get("/",(req, res)=>{
 })
 
 app.get("/api/notes", (req, res)=>{
-  res.json(JSON.stringify(notes))
+  res.json(notes)
 })
 
+const generatedID =()=>{
+  
+  return String(notes.length > 0 ? Math.max(...notes.map(n=>n.id)) + 1 : 0)
+}
+
 app.post("/api/notes", (req, res)=>{
-  const note = req.body
-  console.log(req)
-  res.json(note)
+  const body = req.body
+  
+  if(!body.content){
+    return res.status(400).json({error: "Missing Content "})
+  }
+  const note = {
+    content: body.content,
+    important: body.important || false,
+    id: generatedID()
+  }
+
+  console.log(note)
+
+  notes = notes.concat(note)
+
+  res.json(notes)
 })
 
 app.listen(5000, ()=>{
