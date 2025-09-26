@@ -24,13 +24,46 @@ persons = [
     }
 ]
 
+app.use(express.json())
+
 app.get("/api/persons", (req, res)=>{
   res.send(persons)
 })
 
+app.get("/api/persons/:id", (req, res)=>{
+  const person = persons.find(p=>p.id === req.params.id)
+  if(!person){
+    return res.status(400).json({error:"Missing person"})
+  }
+  res.send(person)
+})
 
 app.get("/info", (req, res)=>{
   res.send(`<p>Phonebook has info for ${persons.length} people</p> <p>${Date()}</p>`)
+})
+
+app.delete("/api/persons/:id", (req, res)=>{
+  res.send(persons.filter(p=>p.id !== req.params.id))
+})
+
+app.post("/api/persons", (req, res)=>{
+  const body = req.body
+  console.log(body)
+  if(!body.name || !body.number){
+    return res.status(400).json({error:"Missing Entry"})
+  }
+  for(let i = 0;i < persons.length; i += 1){
+    if(persons[i].name === body.name){
+      return res.status(400).json({error:"Person already existing"})
+    }
+  }
+  const newPerson = {
+    id: String(Math.floor(Math.random() * 1000000)),
+    name:body.name,
+    number:body.number
+  }
+  persons = persons.concat(newPerson)
+  res.json(persons)
 })
 
 app.listen(5001, ()=>{
