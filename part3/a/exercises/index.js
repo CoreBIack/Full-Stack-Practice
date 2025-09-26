@@ -1,5 +1,6 @@
 const express = require("express")
 const app = express()
+const morgan = require("morgan")
 
 persons = [
     { 
@@ -23,8 +24,8 @@ persons = [
       "number": "39-23-6423122"
     }
 ]
-
-app.use(express.json())
+morgan.token("body", req=>JSON.stringify(req.body))
+app.use(express.json(), morgan(":method :url :status :res[content-length] :response-time ms :body"))
 
 app.get("/api/persons", (req, res)=>{
   res.send(persons)
@@ -33,7 +34,7 @@ app.get("/api/persons", (req, res)=>{
 app.get("/api/persons/:id", (req, res)=>{
   const person = persons.find(p=>p.id === req.params.id)
   if(!person){
-    return res.status(400).json({error:"Missing person"})
+    return res.status(404).json({error:"Missing person"})
   }
   res.send(person)
 })
@@ -48,7 +49,6 @@ app.delete("/api/persons/:id", (req, res)=>{
 
 app.post("/api/persons", (req, res)=>{
   const body = req.body
-  console.log(body)
   if(!body.name || !body.number){
     return res.status(400).json({error:"Missing Entry"})
   }
