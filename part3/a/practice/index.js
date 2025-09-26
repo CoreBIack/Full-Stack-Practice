@@ -1,4 +1,4 @@
-
+const cors = require("cors")
 const express = require("express")
 const app = express()
 
@@ -20,7 +20,7 @@ let notes = [
   }
 ] 
 
-app.use(express.json())
+app.use(express.json(), cors(), express.static("dist"))
 
 app.get("/",(req, res)=>{
   res.send("<h1>Hello World</h1>")
@@ -54,6 +54,7 @@ app.post("/api/notes", (req, res)=>{
   res.json(notes)
 })
 
-app.listen(5000, ()=>{
-  console.log("server listens on port 5000")
+const PORT = process.env.PORT || 5000
+app.listen(PORT, ()=>{
+  console.log(`server listens on port ${PORT}`)
 })

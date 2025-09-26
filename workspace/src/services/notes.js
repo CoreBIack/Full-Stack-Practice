@@ -1,5 +1,5 @@
 import axios from "axios"
-const url = "http://192.168.1.8:3001/notes"
+const url = "/api/notes"
 const getAll =()=>{
   const req = axios.get(url)
   const nonExisting = {
