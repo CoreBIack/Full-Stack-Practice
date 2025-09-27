@@ -33,6 +33,9 @@ app.get("/api/notes/:id", (req, res)=>{
 })
 app.put("/api/notes/:id", (req,res)=>{
   console.log(req.body)
+  const body = req.body
+  const id = req.params.id
+  notes = notes.map(n=>n.id === id ? body : n)
   res.json(req.body)
 })
 
