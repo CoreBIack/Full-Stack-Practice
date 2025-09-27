@@ -1,4 +1,3 @@
-const cors = require("cors")
 const express = require("express")
 const app = express()
 
@@ -19,21 +18,25 @@ let notes = [
     important: true
   }
 ] 
-
-app.use(express.json(), cors(), express.static("dist"))
-
-app.get("/",(req, res)=>{
-  res.send("<h1>Hello World</h1>")
-})
-
-app.get("/api/notes", (req, res)=>{
-  res.json(notes)
-})
-
+app.use(express.json())
+app.use(express.static("dist"))
 const generatedID =()=>{
   
   return String(notes.length > 0 ? Math.max(...notes.map(n=>n.id)) + 1 : 0)
 }
+
+app.get("/api/notes", (req, res)=>{
+  res.json(notes)
+})
+app.get("/api/notes/:id", (req, res)=>{
+  res.json(notes.find(n=>n.id === req.params.id))
+})
+app.put("/api/notes/:id", (req,res)=>{
+  console.log(req.body)
+  res.json(req.body)
+})
+
+
 
 app.post("/api/notes", (req, res)=>{
   const body = req.body
@@ -51,7 +54,7 @@ app.post("/api/notes", (req, res)=>{
 
   notes = notes.concat(note)
 
-  res.json(notes)
+  res.json(note)
 })
 
 const PORT = process.env.PORT || 5000

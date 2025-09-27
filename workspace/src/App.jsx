@@ -24,7 +24,6 @@ const App =()=>{
   }
 
   const handleInputChange=(event)=>{
-    console.log("handle input here", event.target.value)
     setNewNote(event.target.value)    
   }
 
