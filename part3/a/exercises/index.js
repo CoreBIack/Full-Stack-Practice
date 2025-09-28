@@ -25,8 +25,9 @@ persons = [
     }
 ]
 morgan.token("body", req=>JSON.stringify(req.body))
-app.use(express.json(), morgan(":method :url :status :res[content-length] :response-time ms :body"))
-
+app.use(express.json())
+app.use(morgan(":method :url :status :res[content-length] :response-time ms :body"))
+app.use(express.static("dist"))
 app.get("/api/persons", (req, res)=>{
   res.send(persons)
 })
@@ -63,7 +64,7 @@ app.post("/api/persons", (req, res)=>{
     number:body.number
   }
   persons = persons.concat(newPerson)
-  res.json(persons)
+  res.json(person)
 })
 
 app.listen(5001, ()=>{
