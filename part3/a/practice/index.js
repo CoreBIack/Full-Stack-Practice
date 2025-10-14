@@ -1,23 +1,9 @@
+require("dotenv").config()
 const express = require("express")
 const app = express()
+const Note = require("./models/note")
 
-let notes = [
-  {
-    id: "1",
-    content: "HTML is easy",
-    important: true
-  },
-  {
-    id: "2",
-    content: "Browser can execute only JavaScript",
-    important: false
-  },
-  {
-    id: "3",
-    content: "GET and POST are the most important methods of HTTP protocol",
-    important: true
-  }
-] 
+
 app.use(express.json())
 app.use(express.static("dist"))
 const generatedID =()=>{
@@ -26,13 +12,18 @@ const generatedID =()=>{
 }
 
 app.get("/api/notes", (req, res)=>{
-  res.json(notes)
+  Note.find({}).then(notes => {
+    res.json(notes)
+  })
 })
-app.get("/api/notes/:id", (req, res)=>{
-  res.json(notes.find(n=>n.id === req.params.id))
+
+app.get("/api/notes/:id", (req, res) =>{
+  Note.findById(req.params.id).then(note => {
+    res.json(note)
+  })
 })
+
 app.put("/api/notes/:id", (req,res)=>{
-  console.log(req.body)
   const body = req.body
   const id = req.params.id
   notes = notes.map(n=>n.id === id ? body : n)
@@ -47,7 +38,7 @@ app.post("/api/notes", (req, res)=>{
   if(!body.content){
     return res.status(400).json({error: "Missing Content "})
   }
-  const note = {
+  /*const note = {
     content: body.content,
     important: body.important || false,
     id: generatedID()
@@ -57,10 +48,18 @@ app.post("/api/notes", (req, res)=>{
 
   notes = notes.concat(note)
 
-  res.json(note)
+  res.json(note)*/
+
+  const note = new Note({
+    content: body.content,
+    important: body.important
+  })
+  note.save().then(saved=>{
+    res.json(saved)
+  })
 })
 
-const PORT = process.env.PORT || 5000
+const PORT = process.env.PORT
 app.listen(PORT, ()=>{
   console.log(`server listens on port ${PORT}`)
 })

@@ -18,7 +18,6 @@ const Phone = mongoose.model("Phone", phoneSchema)
 if (process.argv.length === 3){
   console.log("phonebook:")
   Phone.find({}).then(res=>{
-    console.log(res)
     res.forEach(phone=>{
       console.log(phone.name, phone.number)
     })
