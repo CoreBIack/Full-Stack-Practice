@@ -6,10 +6,6 @@ const Note = require("./models/note")
 
 app.use(express.json())
 app.use(express.static("dist"))
-const generatedID =()=>{
-  
-  return String(notes.length > 0 ? Math.max(...notes.map(n=>n.id)) + 1 : 0)
-}
 
 app.get("/api/notes", (req, res)=>{
   Note.find({}).then(notes => {
