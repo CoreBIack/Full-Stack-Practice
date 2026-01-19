@@ -69,7 +69,7 @@ app.post("/api/notes", (req, res)=>{
   })
   note.save().then(saved=>{
     res.json(saved)
-  })
+  }).catch(err => next(err))
 })
 
 const errorHandler = (err, req, res, next)=>{
@@ -77,6 +77,8 @@ const errorHandler = (err, req, res, next)=>{
   
   if (err.name === "CastError"){
     return res.status(400).send({error: "malformatted id"})
+  } else if (err.name === "ValidaitonError"){
+    return res.status(400).send({error: err.message})
   }
 
   next(err)
