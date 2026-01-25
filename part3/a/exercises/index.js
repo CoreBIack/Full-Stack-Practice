@@ -36,13 +36,13 @@ app.put("/api/persons/:id", (req, res, next)=>{
 
 
 
-app.delete("/api/persons/:id", (req, res)=>{
+app.delete("/api/persons/:id", (req, res, next)=>{
   Phone.findByIdAndDelete(req.params.id)
   .then(result=>{res.status(204).end()})
   .catch(err=>next(err))
 })
 
-app.post("/api/persons", (req, res)=>{
+app.post("/api/persons", (req, res, next)=>{
   const body = req.body
   if(!body.name || !body.number){
     return res.status(400).json({error:"Missing Entry"})
@@ -68,7 +68,7 @@ app.post("/api/persons", (req, res)=>{
   })
   newPhone.save().then(saved=>{
     res.json(saved)
-  })
+  }).catch(err => next(err))
   }
 )
 
@@ -76,6 +76,9 @@ const errorHandler = (err, req, res, next) =>{
   console.log(err.message)
   if(err.name === "CastError"){
     return res.status(400).send({error: "malformatted id"})
+  }
+  if(err.name === "ValidationError"){
+    return res.status(400).send({error: err.message})
   }
   next(err)
 }

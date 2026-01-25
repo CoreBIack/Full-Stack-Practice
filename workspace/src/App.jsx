@@ -50,18 +50,23 @@ const App=()=>{
           setPersons(persons.map(person=>person.id === duplicateId ? newPerson : person))
         })
       }
-      
     }else{
       phonebookServices.addPerson(newPerson).then(res=>{
         setPersons(persons.concat(newPerson))
+        setNotification(`Added ${newPerson.name}`)
+      setTimeout(()=>{
+        setNotification(null)
+      }, 5000)
+      setNewName("")
+      setNewPhone("")
+    }).catch(err => {
+        setErrorMessage(err.response.data.error)
+        setTimeout(()=>{
+          setErrorMessage(null)
+        }, 5000)
       })
     }
-    setNotification(`Added ${newPerson.name}`)
-    setTimeout(()=>{
-      setNotification(null)
-    }, 5000)
-    setNewName("")
-    setNewPhone("")
+    
   }
 
   const handleDelete=(event)=>{
